@@ -1,4 +1,3 @@
-// File: app/api/predictions/[id]/route.ts
 import { NextRequest, NextResponse } from 'next/server';
 import Replicate from "replicate";
 
@@ -21,3 +20,5 @@ export async function GET(request: NextRequest, { params }: { params: { id: stri
     return NextResponse.json({ error: 'Failed to fetch prediction' }, { status: 500 });
   }
 }
+
+export const dynamic = 'force-dynamic';
