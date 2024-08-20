@@ -26,6 +26,13 @@ Create a file in root directory of project with env. And store your API key in i
 
 If you'd also like to do rate limiting, create an account on UpStash, create a Redis database, and populate the two environment variables in `.env` as well. If you don't want to do rate limiting, you don't need to make any changes.
 
+
+### ENV Variables
+
+REPLICATE_API_TOKEN={your_replicate_url}
+NEXT_PUBLIC_UPLOAD_API_KEY={your_bytescale_api}
+VERCEL_URL=https://{your_vercel_url}
+
 ### Installing the dependencies.
 
 ```bash
