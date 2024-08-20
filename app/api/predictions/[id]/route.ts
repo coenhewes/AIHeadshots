@@ -5,6 +5,8 @@ const replicate = new Replicate({
   auth: process.env.REPLICATE_API_TOKEN,
 });
 
+export const dynamic = 'force-dynamic';
+
 export async function GET(request: NextRequest, { params }: { params: { id: string } }) {
   const id = params.id;
 
@@ -20,5 +22,3 @@ export async function GET(request: NextRequest, { params }: { params: { id: stri
     return NextResponse.json({ error: 'Failed to fetch prediction' }, { status: 500 });
   }
 }
-
-export const dynamic = 'force-dynamic';
