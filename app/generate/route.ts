@@ -94,7 +94,8 @@ export async function POST(request: Request) {
 
     console.log("Replicate API response:", startResponse);
 
-    if (!startResponse || startResponse.length === 0) {
+    // Ensure that startResponse contains a valid output URL
+    if (!startResponse || !Array.isArray(startResponse) || startResponse.length === 0) {
       console.error("Replicate API did not return a valid response.");
       return new Response("Failed to generate business headshot.", {
         status: 500,
