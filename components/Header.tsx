@@ -13,7 +13,7 @@ export default function Header() {
           height={24}
         />
         <h1 className="sm:text-3xl text-xl font-bold ml-2 tracking-tight">
-          proHeadshot.pics
+          AI Headshots
         </h1>
       </Link>
       {/* TODO: replace Github start with Authentication auth.js*/}
@@ -24,7 +24,7 @@ export default function Header() {
         rel="noopener noreferrer"
       >
         <Github />
-        <p>Star on GitHub</p>
+        <p>GitHub</p>
       </a>
     </header>
   );
