@@ -1,17 +1,15 @@
-
 "use client";
 
 import { AnimatePresence, motion } from "framer-motion";
 import Image from "next/image";
 import { useState } from "react";
+import { useRouter } from 'next/navigation';
 import { UploadDropzone } from "react-uploader";
 import { Uploader } from "uploader";
 import Footer from "../../components/Footer";
 import Header from "../../components/Header";
 import LoadingDots from "../../components/LoadingDots";
 import ResizablePanel from "../../components/ResizablePanel";
-import appendNewToName from "../../utils/appendNewToName";
-import downloadPhoto from "../../utils/downloadPhoto";
 
 // Configuration for the uploader
 const uploader = Uploader({
@@ -41,11 +39,9 @@ const options = {
 
 export default function DreamPage() {
   const [originalPhoto, setOriginalPhoto] = useState<string | null>(null);
-  const [restoredImage, setRestoredImage] = useState<string | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
-  const [restoredLoaded, setRestoredLoaded] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
-  const [photoName, setPhotoName] = useState<string | null>(null);
+  const router = useRouter();
 
   const UploadDropZone = () => (
     <UploadDropzone
@@ -53,7 +49,6 @@ export default function DreamPage() {
       options={options}
       onUpdate={(file) => {
         if (file.length !== 0) {
-          setPhotoName(file[0].originalFile.originalFileName);
           setOriginalPhoto(file[0].fileUrl.replace("raw", "thumbnail"));
           generatePhoto(file[0].fileUrl.replace("raw", "thumbnail"));
         }
@@ -68,7 +63,7 @@ export default function DreamPage() {
     setLoading(true);
 
     try {
-      const res = await fetch("/generate", {
+      const res = await fetch("/api/generate", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -90,11 +85,8 @@ export default function DreamPage() {
         return;
       }
 
-      const { outputUrl } = await res.json();
-
-      if (outputUrl) {
-        setRestoredImage(outputUrl);
-      }
+      const { id } = await res.json();
+      router.push(`/prediction/${id}`);
     } catch (error) {
       setError("An unexpected error occurred. Please try again.");
       console.error(error);
@@ -113,7 +105,7 @@ export default function DreamPage() {
         <ResizablePanel>
           <AnimatePresence mode="wait">
             <motion.div className="flex justify-between items-center w-full flex-col mt-4">
-              {!restoredImage && (
+              {!originalPhoto && (
                 <>
                   <div className="mt-4 mb-2 w-full max-w-sm">
                     <div className="flex mt-6 w-96 items-center space-x-3">
@@ -131,7 +123,7 @@ export default function DreamPage() {
                 </>
               )}
               {!originalPhoto && <UploadDropZone />}
-              {originalPhoto && !restoredImage && (
+              {originalPhoto && (
                 <Image
                   alt="original photo"
                   src={originalPhoto}
@@ -139,33 +131,6 @@ export default function DreamPage() {
                   width={400}
                   height={400}
                 />
-              )}
-              {restoredImage && originalPhoto && (
-                <div className="flex sm:space-x-4 sm:flex-row flex-col">
-                  <div>
-                    <h2 className="mb-1 font-medium text-lg">Original Photo</h2>
-                    <Image
-                      alt="original photo"
-                      src={originalPhoto}
-                      className="rounded-2xl relative w-full h-96"
-                      width={400}
-                      height={400}
-                    />
-                  </div>
-                  <div className="sm:mt-0 mt-8">
-                    <h2 className="mb-1 font-medium text-lg">Generated Headshot</h2>
-                    <a href={restoredImage} target="_blank" rel="noreferrer">
-                      <Image
-                        alt="restored photo"
-                        src={restoredImage}
-                        className="rounded-2xl relative sm:mt-0 mt-2 cursor-zoom-in w-full h-96"
-                        width={400}
-                        height={400}
-                        onLoadingComplete={() => setRestoredLoaded(true)}
-                      />
-                    </a>
-                  </div>
-                </div>
               )}
               {loading && (
                 <button
@@ -190,34 +155,14 @@ export default function DreamPage() {
                   <button
                     onClick={() => {
                       setOriginalPhoto(null);
-                      setRestoredImage(null);
-                      setRestoredLoaded(false);
                       setError(null);
                     }}
                     className="bg-blue-500 rounded-full text-white font-medium px-4 py-2 mt-8 hover:bg-blue-500/80 transition"
                   >
-                    Generate another Headshot
-                  </button>
-                )}
-                {restoredLoaded && (
-                  <button
-                    onClick={() => {
-                      downloadPhoto(restoredImage!, appendNewToName(photoName!));
-                    }}
-                    className="bg-white rounded-full text-black border font-medium px-4 py-2 mt-8 hover:bg-gray-100 transition"
-                  >
-                    Download generated Headshot
+                    Upload Another Photo
                   </button>
                 )}
               </div>
-              {restoredLoaded && (
-                <div className="flex flex-col items-center mt-14 mb-6">
-                  <p className="flex justify-center font-small text-gray-700">
-                    Generated headshots are automatically deleted after 1 hour. 
-                    Be sure to download and share!
-                  </p>
-                </div>
-              )}
             </motion.div>
           </AnimatePresence>
         </ResizablePanel>
