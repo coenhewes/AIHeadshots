@@ -1,5 +1,5 @@
 
-# [AIHeadshots](https://github.com/coenhewes/AIHeadshots - professional headshot pics with AI
+# [AIHeadshots](https://github.com/coenhewes/AIHeadshots) - professional headshot pics with AI
 
 
 ## How it works
