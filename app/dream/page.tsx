@@ -1,4 +1,4 @@
-"use client";
+'use client';
 
 import { AnimatePresence, motion } from "framer-motion";
 import Image from "next/image";
@@ -11,7 +11,6 @@ import Header from "../../components/Header";
 import LoadingDots from "../../components/LoadingDots";
 import ResizablePanel from "../../components/ResizablePanel";
 
-// Configuration for the uploader
 const uploader = Uploader({
   apiKey: process.env.NEXT_PUBLIC_UPLOAD_API_KEY || "free",
 });
@@ -86,7 +85,7 @@ export default function DreamPage() {
       }
 
       const { id } = await res.json();
-      router.push(`/prediction/${id}`);
+      router.push(`/prediction-result?id=${id}`);
     } catch (error) {
       setError("An unexpected error occurred. Please try again.");
       console.error(error);
