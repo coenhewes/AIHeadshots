@@ -1,23 +1,11 @@
 
-import { Ratelimit } from "@upstash/ratelimit";
-import redis from "../../utils/redis";
 import { NextResponse } from "next/server";
-import { headers } from "next/headers";
 import Replicate from "replicate";
 
 // Initialize Replicate client
 const replicate = new Replicate({
   auth: process.env.REPLICATE_API_TOKEN,
 });
-
-// Create a new rate limiter, allowing 3 requests per 24 hours
-const ratelimit = redis
-  ? new Ratelimit({
-      redis: redis,
-      limiter: Ratelimit.fixedWindow(3, "1440 m"),
-      analytics: true,
-    })
-  : undefined;
 
 export async function POST(request: Request) {
   try {
@@ -27,30 +15,6 @@ export async function POST(request: Request) {
     if (!process.env.REPLICATE_API_TOKEN) {
       console.error("REPLICATE_API_TOKEN is not set.");
       return new Response("Server configuration error.", { status: 500 });
-    }
-
-    // Rate Limiter Code
-    if (ratelimit) {
-      const headersList = headers();
-      const ipIdentifier = headersList.get("x-real-ip");
-      console.log("IP Identifier:", ipIdentifier);
-
-      const result = await ratelimit.limit(ipIdentifier ?? "");
-      console.log("Rate limit result:", result);
-
-      if (!result.success) {
-        console.warn("Rate limit exceeded for IP:", ipIdentifier);
-        return new Response(
-          "Too many uploads in 1 day. Please try again in 24 hours.",
-          {
-            status: 429,
-            headers: {
-              "X-RateLimit-Limit": result.limit.toString(),
-              "X-RateLimit-Remaining": result.remaining.toString(),
-            },
-          }
-        );
-      }
     }
 
     const body = await request.json();
@@ -94,7 +58,6 @@ export async function POST(request: Request) {
 
     console.log("Replicate API response:", startResponse);
 
-    // Ensure that startResponse contains a valid output URL
     if (!startResponse || !Array.isArray(startResponse) || startResponse.length === 0) {
       console.error("Replicate API did not return a valid response.");
       return new Response("Failed to generate business headshot.", {

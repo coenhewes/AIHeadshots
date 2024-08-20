@@ -1,26 +1,22 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from 'next/server';
+import Replicate from "replicate";
 
-export async function POST(request: Request) {
-  const { hookUrl } = await request.json();
+const replicate = new Replicate({
+  auth: process.env.REPLICATE_API_TOKEN,
+});
 
-  // POST request to Replicate to start the image restoration generation process
-  let startResponse = await fetch(hookUrl, {
-    method: "GET",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: "Token " + process.env.REPLICATE_API_KEY,
-    }
-  });
+export async function GET(request: NextRequest, { params }: { params: { id: string } }) {
+  const id = params.id;
 
-  let jsonResponse = await startResponse.json();
-  console.log("Predict")
-  console.log(jsonResponse)
+  if (!id) {
+    return NextResponse.json({ error: 'Missing prediction ID' }, { status: 400 });
+  }
 
-  if (jsonResponse.status === "succeeded") {
-    return NextResponse.json(jsonResponse.output);
-  } else if (jsonResponse.status === "failed") {
-    return NextResponse.json("Failed to restore image");
-  } else
-    return NextResponse.json("processing")
-
+  try {
+    const prediction = await replicate.predictions.get(id);
+    return NextResponse.json(prediction);
+  } catch (error) {
+    console.error('Error fetching prediction:', error);
+    return NextResponse.json({ error: 'Failed to fetch prediction' }, { status: 500 });
+  }
 }

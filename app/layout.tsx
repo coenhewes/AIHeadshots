@@ -3,31 +3,23 @@ import { Metadata } from "next";
 import Script from 'next/script'
 import "../styles/globals.css";
 
-let title = "Pro Headshot Generator";
-let description = "Generate your professional headshot instantly.";
-let ogimage = "/og-image.png";
-let sitename = "proHeadshot.pics";
-
 export const metadata: Metadata = {
-  title,
-  description,
-  icons: {
-    icon: "/favicon.ico",
-  },
+  title: "Pro Headshot Generator",
+  description: "Generate your professional headshot instantly.",
   openGraph: {
-    images: [ogimage],
-    title,
-    description,
+    images: ["/og-image.png"],
+    title: "Pro Headshot Generator",
+    description: "Generate your professional headshot instantly.",
     url: "https://proheadshot.vercel.app",
-    siteName: sitename,
+    siteName: "proHeadshot.pics",
     locale: "en_US",
     type: "website",
   },
   twitter: {
     card: "summary_large_image",
-    images: [ogimage],
-    title,
-    description,
+    images: ["/og-image.png"],
+    title: "Pro Headshot Generator",
+    description: "Generate your professional headshot instantly.",
   },
 };
 

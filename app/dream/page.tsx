@@ -3,7 +3,6 @@
 
 import { AnimatePresence, motion } from "framer-motion";
 import Image from "next/image";
-import Link from "next/link";
 import { useState } from "react";
 import { UploadDropzone } from "react-uploader";
 import { Uploader } from "uploader";
@@ -217,19 +216,6 @@ export default function DreamPage() {
                     Generated headshots are automatically deleted after 1 hour. 
                     Be sure to download and share!
                   </p>
-                  <p className="mb-6">
-                    <Link target="_blank" href="https://twitter.com/search?q=%23proheadshot">
-                      <span className="text-blue-600">#proheadshot</span>
-                    </Link>
-                  </p>
-                  <Link href="https://buymeacoffee.com/lucataco" target="_blank">
-                    <Image
-                      width="200"
-                      height="100"
-                      src="/bmac.png"
-                      alt="Buy me a Coffee"
-                    />
-                  </Link>
                 </div>
               )}
             </motion.div>
@@ -240,4 +226,3 @@ export default function DreamPage() {
     </div>
   );
 }
-
