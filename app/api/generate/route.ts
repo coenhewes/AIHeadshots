@@ -73,15 +73,21 @@ export async function POST(request: Request) {
       disable_safety_checker: false,
     };
 
-    // Start the prediction and get the webhook URL
+    // Start the prediction
     let prediction;
     try {
-      prediction = await replicate.predictions.create({
+      const predictionOptions: any = {
         version: "ddfc2b08d209f9fa8c1eca692712918bd449f695dabb4a958da31802a9570fe4",
         input: input,
-        webhook: `${process.env.VERCEL_URL}/api/webhook`,
-        webhook_events_filter: ["completed"]
-      });
+      };
+
+      // Only add webhook if VERCEL_URL is defined (production environment)
+      if (process.env.VERCEL_URL) {
+        predictionOptions.webhook = `https://${process.env.VERCEL_URL}/api/webhook`;
+        predictionOptions.webhook_events_filter = ["completed"];
+      }
+
+      prediction = await replicate.predictions.create(predictionOptions);
     } catch (error) {
       console.error("Error making request to Replicate API:", error);
       return new NextResponse("Failed to connect to the Replicate API.", {
