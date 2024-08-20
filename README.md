@@ -1,19 +1,17 @@
-# [proHeadshot](https://proHeadshot.pics) - professional headshot pics with AI
 
-This is an open source version of proheadshot.pics (a paid SaaS product). It's a fork of roomGPT without the auth, payments, or additional features and it's simple to clone, deploy, and play around with.
+# [AIHeadshots](https://github.com/coenhewes/AIHeadshots - professional headshot pics with AI
 
-[![Room GPT](./public/og-image.png)](https://proheadshot.pics)
 
 ## How it works
 
-It uses a custom ML model called [headshot-pics](https://github.com/lllyasviel/ControlNet) used to generate variations headshot pics. This application gives you the ability to upload a photo of any face, which will send it through this ML Model using a Next.js API route, and return your generated professional headshot. The ML Model is hosted on [Replicate](https://replicate.com) and [Bytescale](https://www.bytescale.com/) is used for image storage.
+It uses a custom ML model called [tencentarc/photomaker](https://replicate.com/tencentarc/photomaker) used to generate variations headshot pics. This application gives you the ability to upload a photo of any face, which will send it through this ML Model using a Next.js API route, and return your generated professional headshot. The ML Model is hosted on [Replicate](https://replicate.com) and [Bytescale](https://www.bytescale.com/) is used for image storage.
 
 ## Running Locally
 
 ### Cloning the repository the local machine.
 
 ```bash
-git clone https://github.com/lucataco/proheadshot
+git clone https://github.com/coenhewes/AIHeadshots.git
 ```
 
 ### Creating a account on Replicate to get an API key.
@@ -42,6 +40,3 @@ Then, run the application in the command line and it will be available at `http:
 npm run dev
 ```
 
-## License
-
-This repo is MIT licensed.

@@ -3,6 +3,7 @@
 
 import { AnimatePresence, motion } from "framer-motion";
 import Image from "next/image";
+import Link from "next/link";
 import { useState } from "react";
 import { UploadDropzone } from "react-uploader";
 import { Uploader } from "uploader";
@@ -12,8 +13,6 @@ import LoadingDots from "../../components/LoadingDots";
 import ResizablePanel from "../../components/ResizablePanel";
 import appendNewToName from "../../utils/appendNewToName";
 import downloadPhoto from "../../utils/downloadPhoto";
-import DropDown from "../../components/DropDown";
-import { themeType, themes } from "../../utils/dropdownTypes";
 
 // Configuration for the uploader
 const uploader = Uploader({
@@ -26,17 +25,17 @@ const options = {
   editor: { images: { crop: false } },
   styles: {
     colors: {
-      primary: "#4F46E5", // A richer primary color for buttons & links
-      error: "#EF4444", // Red for error messages
-      shade100: "#111827", // Dark text for a more professional look
-      shade200: "#6B7280", // Muted secondary text
-      shade300: "#9CA3AF", // Hover text color
-      shade400: "#D1D5DB", // Lighter elements
-      shade500: "#E5E7EB", // Close button and progress indicators
-      shade600: "#F3F4F6", // Background shades for drag area
-      shade700: "#F9FAFB", // Light background for images
-      shade800: "#FFFFFF", // Backgrounds for modal and inputs
-      shade900: "#F9FAFB", // Background for file items
+      primary: "#2563EB",
+      error: "#d23f4d",
+      shade100: "#000",
+      shade200: "#444e",
+      shade300: "#fffd",
+      shade400: "#000c",
+      shade500: "#fff9",
+      shade600: "#4447",
+      shade700: "#fff2",
+      shade800: "#fff1",
+      shade900: "#ffff",
     },
   },
 };
@@ -48,7 +47,6 @@ export default function DreamPage() {
   const [restoredLoaded, setRestoredLoaded] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
   const [photoName, setPhotoName] = useState<string | null>(null);
-  const [theme, setTheme] = useState<themeType>("Man");
 
   const UploadDropZone = () => (
     <UploadDropzone
@@ -76,26 +74,28 @@ export default function DreamPage() {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ imageUrl: fileUrl, theme }),
+        body: JSON.stringify({ imageUrl: fileUrl }),
       });
 
       if (res.status === 429) {
         setError(
-          "You've reached the daily limit for headshot generation. Please try again tomorrow!"
+          "You have attempted too many runs today. Please try again in 24 hours."
         );
         setLoading(false);
         return;
       }
 
       if (!res.ok) {
-        setError("Something went wrong. Please try again.");
+        setError("An error occurred while generating the image. Please try again.");
         setLoading(false);
         return;
       }
 
       const { outputUrl } = await res.json();
 
-      setRestoredImage(outputUrl);
+      if (outputUrl) {
+        setRestoredImage(outputUrl);
+      }
     } catch (error) {
       setError("An unexpected error occurred. Please try again.");
       console.error(error);
@@ -105,46 +105,27 @@ export default function DreamPage() {
   }
 
   return (
-    <div className="flex max-w-6xl mx-auto flex-col items-center justify-center py-10 min-h-screen">
+    <div className="flex max-w-6xl mx-auto flex-col items-center justify-center py-2 min-h-screen">
       <Header />
       <main className="flex flex-1 w-full flex-col items-center justify-center text-center px-4 mt-4 sm:mb-0 mb-8">
-        <h1 className="mx-auto max-w-4xl font-display text-5xl font-bold tracking-tight text-gray-900 sm:text-6xl mb-5">
-          Create Your <span className="text-indigo-600">Professional</span> Headshot
+        <h1 className="mx-auto max-w-4xl font-display text-4xl font-bold tracking-normal text-black-800 sm:text-6xl mb-5">
+          Generate your <span className="text-blue-600">Professional</span> headshot
         </h1>
-        <p className="text-lg text-gray-600 mb-6">
-          Upload your photo and let our AI turn it into a stunning business headshot.
-        </p>
         <ResizablePanel>
           <AnimatePresence mode="wait">
             <motion.div className="flex justify-between items-center w-full flex-col mt-4">
               {!restoredImage && (
                 <>
-                  <div className="space-y-4 w-full max-w-sm">
-                    <div className="flex mt-3 items-center space-x-3">
+                  <div className="mt-4 mb-2 w-full max-w-sm">
+                    <div className="flex mt-6 w-96 items-center space-x-3">
                       <Image
                         src="/number-1-black.svg"
                         width={30}
                         height={30}
-                        alt="Step 1 icon"
-                      />
-                      <p className="text-left font-medium">Select Your Style</p>
-                    </div>
-                    <DropDown
-                      theme={theme}
-                      setTheme={(newTheme) => setTheme(newTheme as typeof theme)}
-                      themes={themes}
-                    />
-                  </div>
-                  <div className="mt-4 mb-2 w-full max-w-sm">
-                    <div className="flex mt-6 w-96 items-center space-x-3">
-                      <Image
-                        src="/number-2-black.svg"
-                        width={30}
-                        height={30}
-                        alt="Step 2 icon"
+                        alt="1 icon"
                       />
                       <p className="text-left font-medium">
-                        Upload Your Photo
+                        Upload a picture of your face
                       </p>
                     </div>
                   </div>
@@ -153,9 +134,9 @@ export default function DreamPage() {
               {!originalPhoto && <UploadDropZone />}
               {originalPhoto && !restoredImage && (
                 <Image
-                  alt="Uploaded photo"
+                  alt="original photo"
                   src={originalPhoto}
-                  className="rounded-2xl h-96 shadow-lg"
+                  className="rounded-2xl h-96"
                   width={400}
                   height={400}
                 />
@@ -165,9 +146,9 @@ export default function DreamPage() {
                   <div>
                     <h2 className="mb-1 font-medium text-lg">Original Photo</h2>
                     <Image
-                      alt="Original photo"
+                      alt="original photo"
                       src={originalPhoto}
-                      className="rounded-2xl w-full h-96 shadow-md"
+                      className="rounded-2xl relative w-full h-96"
                       width={400}
                       height={400}
                     />
@@ -176,9 +157,9 @@ export default function DreamPage() {
                     <h2 className="mb-1 font-medium text-lg">Generated Headshot</h2>
                     <a href={restoredImage} target="_blank" rel="noreferrer">
                       <Image
-                        alt="Generated headshot"
+                        alt="restored photo"
                         src={restoredImage}
-                        className="rounded-2xl w-full h-96 shadow-md cursor-pointer"
+                        className="rounded-2xl relative sm:mt-0 mt-2 cursor-zoom-in w-full h-96"
                         width={400}
                         height={400}
                         onLoadingComplete={() => setRestoredLoaded(true)}
@@ -190,9 +171,11 @@ export default function DreamPage() {
               {loading && (
                 <button
                   disabled
-                  className="bg-indigo-600 rounded-full text-white font-medium px-4 pt-2 pb-3 mt-8 w-40"
+                  className="bg-blue-500 rounded-full text-white font-medium px-4 pt-2 pb-3 mt-8 w-40"
                 >
-                  <LoadingDots color="white" style="large" />
+                  <span className="pt-4">
+                    <LoadingDots color="white" style="large" />
+                  </span>
                 </button>
               )}
               {error && (
@@ -200,7 +183,7 @@ export default function DreamPage() {
                   className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-xl mt-8"
                   role="alert"
                 >
-                  <span>{error}</span>
+                  <span className="block sm:inline">{error}</span>
                 </div>
               )}
               <div className="flex space-x-8 justify-center">
@@ -212,9 +195,9 @@ export default function DreamPage() {
                       setRestoredLoaded(false);
                       setError(null);
                     }}
-                    className="bg-indigo-600 rounded-full text-white font-medium px-4 py-2 mt-8 hover:bg-indigo-500 transition"
+                    className="bg-blue-500 rounded-full text-white font-medium px-4 py-2 mt-8 hover:bg-blue-500/80 transition"
                   >
-                    Create Another Headshot
+                    Generate another Headshot
                   </button>
                 )}
                 {restoredLoaded && (
@@ -224,15 +207,29 @@ export default function DreamPage() {
                     }}
                     className="bg-white rounded-full text-black border font-medium px-4 py-2 mt-8 hover:bg-gray-100 transition"
                   >
-                    Download Headshot
+                    Download generated Headshot
                   </button>
                 )}
               </div>
               {restoredLoaded && (
                 <div className="flex flex-col items-center mt-14 mb-6">
-                  <p className="flex justify-center text-sm text-gray-500">
-                    Generated headshots are deleted after 1 hour. Make sure to download yours!
+                  <p className="flex justify-center font-small text-gray-700">
+                    Generated headshots are automatically deleted after 1 hour. 
+                    Be sure to download and share!
                   </p>
+                  <p className="mb-6">
+                    <Link target="_blank" href="https://twitter.com/search?q=%23proheadshot">
+                      <span className="text-blue-600">#proheadshot</span>
+                    </Link>
+                  </p>
+                  <Link href="https://buymeacoffee.com/lucataco" target="_blank">
+                    <Image
+                      width="200"
+                      height="100"
+                      src="/bmac.png"
+                      alt="Buy me a Coffee"
+                    />
+                  </Link>
                 </div>
               )}
             </motion.div>
