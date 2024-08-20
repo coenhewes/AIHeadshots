@@ -7,6 +7,7 @@ import Header from "../../../components/Header";
 import Footer from "../../../components/Footer";
 import downloadPhoto from "../../../utils/downloadPhoto";
 import appendNewToName from "../../../utils/appendNewToName";
+import LoadingScreen from "../../../components/LoadingScreen";
 
 export default function PredictionPage() {
   const [prediction, setPrediction] = useState<any>(null);
@@ -37,7 +38,7 @@ export default function PredictionPage() {
   }, [id]);
 
   if (error) return <div>Error: {error}</div>;
-  if (!prediction) return <div>Loading...</div>;
+  if (!prediction) return <LoadingScreen />;
 
   return (
     <div className="flex max-w-6xl mx-auto flex-col items-center justify-center py-2 min-h-screen">
